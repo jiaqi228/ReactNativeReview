@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { SafeAreaView } from 'react-native'
+import { connect } from 'react-redux'
 
 import List from './List'
 import Input from './Input'
@@ -8,33 +9,25 @@ import store from './store'
 import { actionCreators } from './todoListRedux'
 
 
-export default class App extends Component {
-  state = {}
+const mapStateToProps = (state) => ({
+  todos: state.todos
+})
 
-  componentWillMount(){
-    const {todos} = store.getState()
-    this.setState({todos})
-
-    this.unsubscribe = store.subscribe(()=>{
-      const {todos} = store.getState()
-      this.setState({todos})
-    })
-  }
-
-  componentWillUnmount(){
-    this.unsubscribe()
-  }
+class App extends Component {
 
   onAddTodo = (text) => {
-    store.dispatch(actionCreators.add(text))
+    const {dispatch} = this.props
+    dispatch(actionCreators.add(text))  // Change state by calling store.dispatch() method.
+    // store.dispatch will call reducer method which was passed in it when store initialized.
   }
 
   onRemoveTodo = (index) => {
-    store.dispatch(actionCreators.remove(index))
+    const {dispatch} = this.props
+    dispatch(actionCreators.remove(index))
   }
 
   render() {
-    const {todos} = this.state
+    const {todos} = this.props
 
     return (
       <SafeAreaView>
@@ -53,3 +46,5 @@ export default class App extends Component {
     )
   }
 }
+
+export default connect(mapStateToProps)(App)

@@ -35,7 +35,7 @@ export const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 todos: [payload, ...todos]
-            }
+            }   // New Javascript syntax: todos will override the todos in state.
         }
         case types.REMOVE: {
             return {

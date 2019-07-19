@@ -4,37 +4,51 @@ import { SafeAreaView } from 'react-native'
 import List from './List'
 import Input from './Input'
 import Title from './Title'
+import store from './store'
+import { actionCreators } from './todoListRedux'
 
 
 export default class App extends Component {
-  state = {
-    todos: ['Click to remove', 'Learn React Native', 'Write code', 'Ship App'],
+  state = {}
+
+  componentWillMount(){
+    const {todos} = store.getState()
+    this.setState({todos})
+
+    this.unsubscribe = store.subscribe(()=>{
+      const {todos} = store.getState()
+      this.setState({todos})
+    })
+  }
+
+  componentWillUnmount(){
+    this.unsubscribe()
   }
 
   onAddTodo = (text) => {
-    const {todos} = this.state
-    this.setState({
-      todos: [text, ...todos]
-    })
+    store.dispatch(actionCreators.add(text))
   }
 
   onRemoveTodo = (index) => {
-    const {todos} = this.state
-    this.setState({
-      todos: todos.filter((todo,i) => i!=index)
-    })
+    store.dispatch(actionCreators.remove(index))
   }
 
   render() {
     const {todos} = this.state
 
-    return(
+    return (
       <SafeAreaView>
         <Title>
           To-Do List
         </Title>
-        <Input placeholder={'Tyle a todo, then hit enter!'} onSubmitEditing={this.onAddTodo} />
-        <List list={todos} onPressItem={this.onRemoveTodo}/>
+        <Input
+          placeholder={'Type a todo, then hit enter!'}
+          onSubmitEditing={this.onAddTodo}
+        />
+        <List
+          list={todos}
+          onPressItem={this.onRemoveTodo}
+        />
       </SafeAreaView>
     )
   }
